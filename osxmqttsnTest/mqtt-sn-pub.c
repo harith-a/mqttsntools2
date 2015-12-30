@@ -195,7 +195,40 @@ int main(int argc, char* argv[])
         mqtt_sn_send_publish(sock, topic_id, topic_id_type, message_data, qos, retain);
         
             if (qos == 1){
-            mqtt_sn_receive_puback(sock);
+
+                struct timeval tv;
+                fd_set rfd;
+                int ret;
+                int resend = 0;
+
+                while (resend < 5){
+
+                FD_ZERO(&rfd);
+                FD_SET(sock, &rfd);
+
+                tv.tv_sec = 1;
+                tv.tv_usec = 0;
+
+                ret = select(FD_SETSIZE, &rfd, NULL, NULL, &tv);
+                    if (ret < 0) {
+                        printf("Select() Error!\n" );
+                        exit(EXIT_FAILURE);
+                    }
+                    else if (ret > 0) {
+
+                        // Receive a packet
+                        mqtt_sn_receive_puback(sock);
+                        //printf("PUBACK Received!\n");
+                        resend = 6;
+                    }
+                    else if (ret == 0)
+                    {
+                        printf("republishing...\n");
+                        mqtt_sn_send_publish(sock, topic_id, topic_id_type, message_data, qos, retain);
+                        resend++;
+                    }
+                }
+            
             }
             //QOS=2
             else if(qos==2){
@@ -241,3 +274,38 @@ int main(int argc, char* argv[])
 
            return 0;
 }
+
+// void mqqt_wait_qos_one(int sock,int timeout){
+    
+//     time_t now = time(NULL);
+//     struct timeval tv;
+//     fd_set rfd;
+//     int ret;
+
+//     FD_ZERO(&rfd);
+//     FD_SET(sock, &rfd);
+
+//     tv.tv_sec = timeout;
+//     tv.tv_usec = 0;
+
+//     ret = select(FD_SETSIZE, &rfd, NULL, NULL, &tv);
+//         if (ret < 0) {
+//             if (errno != EINTR) {
+//             // Something is wrong.
+//             perror("select");
+//             exit(EXIT_FAILURE);
+//             }
+//         } 
+//         else if (ret == 0)
+//         {
+//             printf("timeout!\n", );
+//         }
+//         else if (ret > 0) {
+
+//             // Receive a packet
+//             mqtt_sn_receive_puback(sock);
+//             monitor = 1;
+//         }
+    
+
+// }

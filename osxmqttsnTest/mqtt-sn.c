@@ -427,7 +427,6 @@ void mqtt_sn_receive_puback(int sock)
     // Check Puback return code
     if (debug)
         fprintf(stderr, "PUBACK return code: 0x%2.2x\n", packet->return_code);
-        fprintf(stderr, "message_id code: 0x%2.2x\n", packet->message_id);
 
     if (packet->return_code) {
         fprintf(stderr, "CONNECT error: %s\n", mqtt_sn_return_code_string(packet->return_code));

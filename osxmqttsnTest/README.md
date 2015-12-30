@@ -3,7 +3,7 @@ Command line tools written in C for the MQTT-SN (MQTT for Sensor Networks) proto
 Supported Features
 ------------------
 
-- QoS 0 and -1
+- QoS 0 , -1 , 1 & 2 (QOS 1 & 2 is only partially working and still does not provide full compatibility)
 - Keep alive pings
 - Publishing retained messages
 - Publishing empty messages
@@ -84,6 +84,6 @@ License
 
 MQTT-SN Tools is licensed under the [MIT License].
 
-
+Code Forked
 
 [MIT License]: http://opensource.org/licenses/MIT
